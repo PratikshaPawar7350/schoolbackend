@@ -1,0 +1,13 @@
+services:
+  - name: my-express-app
+    env:
+      - key: DB_HOST
+        value: sql.freedb.tech
+      - key: DB_NAME
+        value: freedb_Syallbus
+      - key: DB_USER
+        value: freedb_studencrete
+      - key: DB_PASSWORD
+      value: T$48vsFn9uFQNZH # Assuming your password is stored in a file
+    buildCommand: npm install && npm run build
+    startCommand: npm start
