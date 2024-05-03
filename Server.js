@@ -27,6 +27,7 @@ const query = (sql, params) => {
     pool.getConnection((err, connection) => {
       if (err) {
         reject(err); // Reject if unable to get connection
+        return;
       }
 
       connection.query(sql, params, (err, rows) => {
@@ -34,9 +35,9 @@ const query = (sql, params) => {
 
         if (err) {
           reject(err); // Reject if query execution fails
+        } else {
+          resolve(rows); // Resolve with query results
         }
-
-        resolve(rows); // Resolve with query results
       });
     });
   });
@@ -73,4 +74,14 @@ app.get('/chapterdetails', async (req, res) => {
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+
+  // Test database connection on startup
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error getting MySQL connection from pool:', err);
+    } else {
+      console.log('MySQL connection pool initialized successfully!');
+      connection.release(); // Release the connection back to the pool
+    }
+  });
 });
