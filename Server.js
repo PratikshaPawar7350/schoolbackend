@@ -57,6 +57,7 @@ app.get('/chapter', async (req, res) => {
     res.status(500).json({ error: 'Error fetching data from the database', details: err.message });
   }
 });
+// Function to save base64-encoded image data to a file
 function saveBase64Image(base64String, fileName) {
   const filePath = path.join(__dirname, 'images', fileName);
   const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
@@ -67,16 +68,10 @@ function saveBase64Image(base64String, fileName) {
 
 // Route to fetch syllabus data
 app.get('/syllabus', (req, res) => {
-  const { syllabusname } = req.query;
-
-  if (!syllabusname) {
-    return res.status(400).json({ error: 'Syllabusname parameter is required' });
-  }
-
-  const query = 'SELECT id, syllabusname, image, standard FROM syllabus WHERE syllabusname = ?';
+  const query = 'SELECT id, syllabusname, image, standard FROM syllabus';
 
   // Use the connection pool to execute the SQL query
-  pool.query(query, [syllabusname], (error, results) => {
+  pool.query(query, (error, results) => {
     if (error) {
       console.error('Error fetching syllabus data:', error);
       return res.status(500).json({ error: 'Error fetching syllabus data' });
@@ -108,10 +103,6 @@ app.get('/syllabus', (req, res) => {
     res.json(syllabusData);
   });
 });
-
-
-
-
 
 app.get('/chapterdetails', async (req, res) => {
   const chapterName = req.query.name;
