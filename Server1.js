@@ -104,6 +104,15 @@ function bufferToBase64(buffer) {
       res.json(syllabusData);
     });
   });
+  app.get('/chapter', async (req, res) => {
+    try {
+      const rows = await query('SELECT * FROM chapters');
+      res.json(rows);
+    } catch (err) {
+      console.error('Error executing database query:', err);
+      res.status(500).json({ error: 'Error fetching data from the database', details: err.message });
+    }
+  });
   
 app.get('/chapterdetails', async (req, res) => {
   const chapterName = req.query.name;
