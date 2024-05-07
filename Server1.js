@@ -73,7 +73,7 @@ function bufferToBase64(buffer) {
   
   // Route to fetch all syllabus data
   app.get('/syllabus', (req, res) => {
-    const query = 'SELECT id, syllabusname, image, standard FROM syllabus';
+    const query = 'SELECT  * FROM syllabus';
   
     // Use the connection pool to execute the SQL query
     pool.query(query, (error, results) => {
