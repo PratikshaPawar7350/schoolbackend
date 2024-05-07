@@ -57,6 +57,19 @@ app.get('/chapter', async (req, res) => {
   }
 });
 
+app.get('/syllabus', async (req, res) => {
+  try {
+    const rows = await query('SELECT * FROM syllabus');
+    res.json(rows);
+  } catch (err) {
+    console.error('Error executing database query:', err);
+    res.status(500).json({ error: 'Error fetching data from the database', details: err.message });
+  }
+});
+
+
+
+
 app.get('/chapterdetails', async (req, res) => {
   const chapterName = req.query.name;
   const queryStr = `
