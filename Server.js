@@ -3,8 +3,7 @@ const mysql = require('mysql2'); // Use mysql2 instead of mysql
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-const path = require('path');
-const fs = require('fs');
+
 const app = express();
 const port = process.env.PORT || 4000;
 
