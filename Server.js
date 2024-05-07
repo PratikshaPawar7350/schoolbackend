@@ -59,7 +59,7 @@ app.get('/chapter', async (req, res) => {
 
 function bufferToBase64(buffer) {
   if (!buffer || !Buffer.isBuffer(buffer)) {
-    return null;
+    return null; // Handle case where buffer is null, undefined, or not a Buffer
   }
   return buffer.toString('base64');
 }
@@ -75,7 +75,7 @@ app.get('/syllabus', (req, res) => {
     }
 
     // Map results and convert image data to base64
-    const syllabusData = results.rows.map(syllabus => ({
+    const syllabusData = results.map(syllabus => ({
       id: syllabus.id,
       syllabusname: syllabus.syllabusname,
       // Convert image buffer to base64
@@ -85,6 +85,7 @@ app.get('/syllabus', (req, res) => {
     res.json(syllabusData);
   });
 });
+
 
 
 
