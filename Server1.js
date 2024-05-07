@@ -79,7 +79,7 @@ function bufferToBase64(buffer) {
     pool.query(query, (error, results) => {
       if (error) {
         console.error('Error fetching syllabus data:', error);
-        return res.status(500).json({ error: 'Error fetching syllabus data' });
+        return res.status(500).json({ error: 'Error fetching syllabus data', details: error.message });
       }
   
       // Process syllabus data
