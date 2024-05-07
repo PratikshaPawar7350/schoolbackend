@@ -57,15 +57,33 @@ app.get('/chapter', async (req, res) => {
   }
 });
 
-app.get('/syllabus', async (req, res) => {
-  try {
-    const rows = await query('SELECT * FROM syllabus');
-    res.json(rows);
-  } catch (err) {
-    console.error('Error executing database query:', err);
-    res.status(500).json({ error: 'Error fetching data from the database', details: err.message });
-  }
+function arrayBufferToBase64(buffer) {
+  const binary = [].slice.call(new Uint8Array(buffer));
+  const base64 = btoa(binary.map(byte => String.fromCharCode(byte)).join(''));
+  return base64;
+}
+
+// Route to fetch syllabus data
+app.get('/syllabus', (req, res) => {
+  const query = 'SELECT * FROM syllabus';
+
+  pool.query(query, (error, results) => {
+    if (error) {
+      console.error('Error fetching syllabus data:', error);
+      return res.status(500).json({ error: 'Error fetching syllabus data' });
+    }
+
+    // Convert image data to base64 for each result
+    const syllabusData = results.map(syllabus => ({
+      id: syllabus.id,
+      syllabusname: syllabus.syllabusname,
+      image: arrayBufferToBase64(syllabus.image.data)
+    }));
+
+    res.json(syllabusData);
+  });
 });
+
 
 
 
