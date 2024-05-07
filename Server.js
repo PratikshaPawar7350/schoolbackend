@@ -3,7 +3,8 @@ const mysql = require('mysql2'); // Use mysql2 instead of mysql
 const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-
+const path = require('path');
+const fs = require('fs');
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -56,33 +57,58 @@ app.get('/chapter', async (req, res) => {
     res.status(500).json({ error: 'Error fetching data from the database', details: err.message });
   }
 });
-
-function bufferToBase64(buffer) {
-  return Buffer.from(buffer).toString('base64');
+function saveBase64Image(base64String, fileName) {
+  const filePath = path.join(__dirname, 'images', fileName);
+  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+  const buffer = Buffer.from(base64Data, 'base64');
+  fs.writeFileSync(filePath, buffer);
+  return filePath; // Return the file path where the image is saved
 }
 
 // Route to fetch syllabus data
 app.get('/syllabus', (req, res) => {
-  const query = 'SELECT id, syllabusname, image, standred FROM syllabus';
+  const { syllabusname } = req.query;
 
-  pool.query(query, (error, results) => {
+  if (!syllabusname) {
+    return res.status(400).json({ error: 'Syllabusname parameter is required' });
+  }
+
+  const query = 'SELECT id, syllabusname, image, standard FROM syllabus WHERE syllabusname = ?';
+
+  // Use the connection pool to execute the SQL query
+  pool.query(query, [syllabusname], (error, results) => {
     if (error) {
       console.error('Error fetching syllabus data:', error);
       return res.status(500).json({ error: 'Error fetching syllabus data' });
     }
 
-    // Map results and convert image data to base64
-    const syllabusData = results.map(syllabus => ({
-      id: syllabus.id,
-      syllabusname: syllabus.syllabusname,
-      standred: syllabus.standred,
-      // Convert image buffer to base64
-      image: bufferToBase64(syllabus.image)
-    }));
+    if (results.length === 0) {
+      return res.status(404).json({ error: 'Syllabus not found' });
+    }
+
+    // Process syllabus data
+    const syllabusData = results.map(syllabus => {
+      if (syllabus.image) {
+        const fileName = `syllabus_${syllabus.id}.png`;
+        const imagePath = saveBase64Image(syllabus.image, fileName);
+        syllabus.image = imagePath; // Update image field to the file path of the saved PNG
+      } else {
+        // If no image data, set a default image path
+        syllabus.image = path.join(__dirname, 'images', 'default.png');
+      }
+
+      return {
+        id: syllabus.id,
+        syllabusname: syllabus.syllabusname,
+        standard: syllabus.standard,
+        image: syllabus.image
+      };
+    });
 
     res.json(syllabusData);
   });
 });
+
 
 
 
