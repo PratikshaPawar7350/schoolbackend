@@ -58,15 +58,12 @@ app.get('/chapter', async (req, res) => {
 });
 
 function bufferToBase64(buffer) {
-  if (!buffer || !Buffer.isBuffer(buffer)) {
-    return null; // Handle case where buffer is null, undefined, or not a Buffer
-  }
-  return buffer.toString('base64');
+  return Buffer.from(buffer).toString('base64');
 }
 
-// Endpoint to fetch syllabus data
+// Route to fetch syllabus data
 app.get('/syllabus', (req, res) => {
-  const query = 'SELECT * FROM syllabus';
+  const query = 'SELECT id, syllabusname, image, standred FROM syllabus';
 
   pool.query(query, (error, results) => {
     if (error) {
@@ -78,6 +75,7 @@ app.get('/syllabus', (req, res) => {
     const syllabusData = results.map(syllabus => ({
       id: syllabus.id,
       syllabusname: syllabus.syllabusname,
+      standred: syllabus.standred,
       // Convert image buffer to base64
       image: bufferToBase64(syllabus.image)
     }));
@@ -85,7 +83,6 @@ app.get('/syllabus', (req, res) => {
     res.json(syllabusData);
   });
 });
-
 
 
 
