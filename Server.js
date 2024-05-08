@@ -61,39 +61,29 @@ function bufferToBase64(buffer) {
   return Buffer.from(buffer).toString('base64');
 }
 
-// Route to fetch syllabus data
 // Route to fetch syllabus data filtered by standred
-app.get('/syllabus', (req, res) => {
-  const { standred } = req.query; // Extract standred from query parameters
-
-  // Construct the SQL query with optional standred filter
-  let query = 'SELECT id, syllabusname, image, standred FROM syllabus';
-  const queryParams = [];
+app.get('/syllabus', async (req, res) => {
+  const { standred } = req.query;
+  let sql = 'SELECT id, syllabusname, image, standred FROM syllabus';
 
   if (standred) {
-    query += ' WHERE standred = ?';
-    queryParams.push(standred);
+    sql += ' WHERE standred = ?';
   }
 
-  pool.query(query, queryParams, (error, results) => {
-    if (error) {
-      console.error('Error fetching syllabus data:', error);
-      return res.status(500).json({ error: 'Error fetching syllabus data' });
-    }
-
-    // Map results and convert image data to base64
+  try {
+    const results = await query(sql, standred ? [standred] : []);
     const syllabusData = results.map(syllabus => ({
       id: syllabus.id,
       syllabusname: syllabus.syllabusname,
       standred: syllabus.standred,
-      // Convert image buffer to base64
       image: bufferToBase64(syllabus.image)
     }));
-
     res.json(syllabusData);
-  });
+  } catch (err) {
+    console.error('Error fetching syllabus data:', err);
+    res.status(500).json({ error: 'Error fetching syllabus data' });
+  }
 });
-
 
 
 
