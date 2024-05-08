@@ -87,9 +87,43 @@ app.get('/syllabus', async (req, res) => {
 
     // Return the syllabus data as JSON response
     res.json(syllabusData);
+    
   } catch (err) {
     console.error('Error fetching syllabus data:', err);
     res.status(500).json({ error: 'Error fetching syllabus data' });
+  }
+});
+
+app.get('/chapters', async (req, res) => {
+  const { syllabusName } = req.query;
+
+  if (!syllabusName) {
+    return res.status(400).json({ error: 'Syllabus name parameter is required' });
+  }
+
+  try {
+    // Define the SQL query to fetch chapters and associated syllabus details
+    const sql = `
+      SELECT 
+        chapter.cid AS chapter_id,
+        chapter.chaptername AS chapter_name,
+        syllabus.id AS syllabus_id,
+        syllabus.syllabusname
+      FROM 
+        chapter
+      INNER JOIN 
+        syllabus ON chapter.sid = syllabus.id
+      WHERE 
+        syllabus.syllabusname = ?`;
+
+    // Execute the query with the syllabus name as parameter
+    const chapters = await query(sql, [syllabusName]);
+
+    // Return the chapters data as JSON response
+    res.json(chapters);
+  } catch (err) {
+    console.error('Error fetching chapters:', err);
+    res.status(500).json({ error: 'Error fetching chapters' });
   }
 });
 
