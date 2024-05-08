@@ -63,28 +63,35 @@ function bufferToBase64(buffer) {
 
 // Route to fetch syllabus data filtered by standred
 app.get('/syllabus', async (req, res) => {
-  const { standred } = req.query;
-  let sql = 'SELECT id, syllabusname, image, standred FROM syllabus';
+  const { standard } = req.query;
 
-  if (standred) {
-    sql += ' WHERE standred = ?';
+  // Check if standard parameter is provided and valid
+  if (!standard) {
+    return res.status(400).json({ error: 'Standard parameter is required' });
   }
 
   try {
-    const results = await query(sql, standred ? [standred] : []);
+    // Define the SQL query to select syllabus data filtered by standard
+    const sql = 'SELECT id, syllabusname, image, standred FROM syllabus WHERE standred = ?';
+
+    // Execute the query with the standard parameter
+    const results = await query(sql, [standard]);
+
+    // Map the results to format the response data
     const syllabusData = results.map(syllabus => ({
       id: syllabus.id,
       syllabusname: syllabus.syllabusname,
       standred: syllabus.standred,
-      image: bufferToBase64(syllabus.image)
+      image: bufferToBase64(syllabus.image) // Assuming bufferToBase64 is defined
     }));
+
+    // Return the syllabus data as JSON response
     res.json(syllabusData);
   } catch (err) {
     console.error('Error fetching syllabus data:', err);
     res.status(500).json({ error: 'Error fetching syllabus data' });
   }
 });
-
 
 
 
