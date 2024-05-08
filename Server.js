@@ -107,7 +107,7 @@ app.get('/chapters', async (req, res) => {
       SELECT 
         chapter.cid AS chapter_id,
         chapter.chaptername AS chapter_name,
-        syllabus.id AS syllabus_id,
+     
         syllabus.syllabusname
       FROM 
         chapter
