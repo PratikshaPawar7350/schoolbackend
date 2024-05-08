@@ -62,10 +62,20 @@ function bufferToBase64(buffer) {
 }
 
 // Route to fetch syllabus data
+// Route to fetch syllabus data filtered by standred
 app.get('/syllabus', (req, res) => {
-  const query = 'SELECT id, syllabusname, image, standred FROM syllabus';
+  const { standred } = req.query; // Extract standred from query parameters
 
-  pool.query(query, (error, results) => {
+  // Construct the SQL query with optional standred filter
+  let query = 'SELECT id, syllabusname, image, standred FROM syllabus';
+  const queryParams = [];
+
+  if (standred) {
+    query += ' WHERE standred = ?';
+    queryParams.push(standred);
+  }
+
+  pool.query(query, queryParams, (error, results) => {
     if (error) {
       console.error('Error fetching syllabus data:', error);
       return res.status(500).json({ error: 'Error fetching syllabus data' });
