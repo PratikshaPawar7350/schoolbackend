@@ -128,6 +128,85 @@ app.get('/chapters', async (req, res) => {
 });
 
 
+app.get('/sidebaritems', async (req, res) => {
+  const { ChapterName } = req.query;
+
+  if (!ChapterName) {
+    return res.status(400).json({ error: 'Selected chapter name parameter is required' });
+  }
+
+  try {
+    // Define the SQL query to fetch sidebar items for the selected chapter
+    const sql = `
+      SELECT
+        s.sidebarid,
+        s.sidebaritem,
+        c.cid,
+        c.chaptername
+      FROM
+        siderbara s
+      INNER JOIN
+        chapter c ON s.cid = c.cid
+      WHERE
+        c.chaptername = ?`;
+
+    // Execute the query with the selected chapter name as parameter
+    const sidebarItems = await query(sql, [ChapterName]);
+
+    // Return the sidebar items data as JSON response
+    res.json(sidebarItems);
+  } catch (err) {
+    console.error('Error fetching sidebar items:', err);
+    res.status(500).json({ error: 'Error fetching sidebar items' });
+  }
+});
+
+//for introduction
+// Route to fetch introduction details based on sidebar item
+app.get('/introduction', async (req, res) => {
+  const { sidebaritem } = req.query;
+
+  if (!sidebaritem) {
+    return res.status(400).json({ error: 'Sidebar Item parameter is required' });
+  }
+
+  try {
+    // Define the SQL query to fetch introduction details for the specified sidebar item
+    const sql = `
+      SELECT
+        i.Inid,
+        i.Introduction,
+        i.image,
+        i.cid,
+        i.sid
+      FROM
+        introduction i
+      INNER JOIN
+        siderbara s ON i.cid = s.cid
+      WHERE
+        s.sidebaritem = ?;
+    `;
+
+    // Execute the query with the sidebaritem as parameter
+    const selectedSidebarItem = await query(sql, [sidebaritem]);
+
+    // Map the results to format the response data with image in base64 format
+    const formattedData = selectedSidebarItem.map(item => ({
+      Inid: item.Inid,
+      Introduction: item.Introduction,
+      cid: item.cid,
+      sid: item.sid,
+      // Convert image to base64
+      image: item.image ? bufferToBase64(item.image) : null
+    }));
+
+    // Return the selected sidebar item data as JSON response
+    res.json(formattedData);
+  } catch (err) {
+    console.error('Error fetching selected sidebar item:', err);
+    res.status(500).json({ error: 'Error fetching selected sidebar item' });
+  }
+});
 
 app.get('/chapterdetails', async (req, res) => {
   const chapterName = req.query.name;
