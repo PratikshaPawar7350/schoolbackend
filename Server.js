@@ -140,9 +140,8 @@ app.get('/sidebaritems', async (req, res) => {
     const sql = `
       SELECT
         s.sidebarid,
-        s.sidebaritem,
-        c.cid,
-        c.chaptername
+        s.sidebaritem
+       
       FROM
         siderbara s
       INNER JOIN
