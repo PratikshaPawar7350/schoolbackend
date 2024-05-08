@@ -106,9 +106,9 @@ app.get('/chapters', async (req, res) => {
     const sql = `
       SELECT 
         chapter.cid AS chapter_id,
-        chapter.chaptername AS chapter_name,
+        chapter.chaptername AS chapter_name
      
-    
+       
       FROM 
         chapter
       INNER JOIN 
