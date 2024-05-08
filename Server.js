@@ -108,7 +108,7 @@ app.get('/chapters', async (req, res) => {
         chapter.cid AS chapter_id,
         chapter.chaptername AS chapter_name,
      
-        syllabus.syllabusname
+    
       FROM 
         chapter
       INNER JOIN 
