@@ -134,7 +134,7 @@ app.get('/sidebaritems', async (req, res) => {
         s.sidebaritem
        
       FROM
-        siderbara s
+        siderbar s
       INNER JOIN
         chapter c ON s.cid = c.cid
       WHERE
