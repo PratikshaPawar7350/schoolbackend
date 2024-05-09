@@ -130,7 +130,7 @@ app.get('/sidebaritems', async (req, res) => {
     // Define the SQL query to fetch sidebar items for the selected chapter
     const sql = `
       SELECT
-        s.sidebarid,
+        s.id,
         s.sidebaritem
        
       FROM
