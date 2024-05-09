@@ -96,7 +96,7 @@ app.get('/chapters', async (req, res) => {
     // Define the SQL query to fetch chapters and associated syllabus details
     const sql = `
       SELECT 
-        chapter.cid AS chapter_id,
+      
         chapter.chaptername AS chapter_name
      
        
