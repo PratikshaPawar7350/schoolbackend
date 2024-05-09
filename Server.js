@@ -47,15 +47,6 @@ const query = (sql, params) => {
 };
 
 // Routes
-app.get('/chapter', async (req, res) => {
-  try {
-    const rows = await query('SELECT * FROM chapters');
-    res.json(rows);
-  } catch (err) {
-    console.error('Error executing database query:', err);
-    res.status(500).json({ error: 'Error fetching data from the database', details: err.message });
-  }
-});
 
 function bufferToBase64(buffer) {
   return Buffer.from(buffer).toString('base64');
@@ -160,6 +151,8 @@ app.get('/sidebaritems', async (req, res) => {
   }
 });
 
+
+
 //for introduction
 // Route to fetch introduction details based on sidebar item
 app.get('/introduction', async (req, res) => {
@@ -207,7 +200,7 @@ app.get('/introduction', async (req, res) => {
   }
 });
 
-app.get('/chapterdetails', async (req, res) => {
+/*app.get('/chapterdetails', async (req, res) => {
   const chapterName = req.query.name;
   const queryStr = `
     SELECT * 
@@ -222,7 +215,7 @@ app.get('/chapterdetails', async (req, res) => {
     console.error('Error executing database query:', err);
     res.status(500).json({ error: 'Error fetching data from the database', details: err.message });
   }
-});
+});*/
 
 // Start the server
 app.listen(port, () => {
